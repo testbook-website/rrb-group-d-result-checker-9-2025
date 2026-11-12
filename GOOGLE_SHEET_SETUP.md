@@ -104,3 +104,4 @@ Commit and push to GitHub. Every visitor will now submit directly into your Goog
 
 ## Backup: Download Leads as CSV Anytime
 Even before connecting Google Sheets, the tool automatically stores all submissions in the browser's `localStorage`. You can click **Download All Captured Leads (CSV)** inside the **⚙️ Sheet Setup & Leads** popup at any time to export the full data.
+
