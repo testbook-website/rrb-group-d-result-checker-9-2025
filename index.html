@@ -3,34 +3,555 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RRB Group D Result Checker Widget</title>
-  <link rel="stylesheet" href="./styles.css">
+  <title>RRB Group D (Level-1) Result Checker Widget</title>
+  <style>
+    /* ---------------- Design System ---------------- */
+    :root {
+      --primary: #0a3d62;
+      --primary-hover: #072740;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --success: #059669;
+      --success-bg: #ecfdf5;
+      --danger: #dc2626;
+      --danger-bg: #fef2f2;
+      --bg-page: #f1f5f9;
+      --bg-card: #ffffff;
+      --border: #e2e8f0;
+      --border-focus: #3b82f6;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --radius: 12px;
+      --radius-sm: 6px;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font);
+      background-color: var(--bg-page);
+      color: var(--text-main);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      line-height: 1.45;
+    }
+
+    /* ---------------- Widget Container ---------------- */
+    .widget-container {
+      width: 100%;
+      max-width: 440px;
+      margin: auto;
+    }
+
+    .widget-card {
+      background: var(--bg-card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
+      padding: 22px;
+      overflow: hidden;
+    }
+
+    /* ---------------- Header ---------------- */
+    .widget-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding-bottom: 14px;
+      border-bottom: 1px solid var(--border);
+      margin-bottom: 16px;
+      gap: 8px;
+    }
+
+    .header-brand {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .header-icon {
+      font-size: 1.6rem;
+      line-height: 1;
+    }
+
+    .header-title {
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--primary);
+      line-height: 1.2;
+    }
+
+    .header-sub {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      font-weight: 500;
+    }
+
+    .live-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--success-bg);
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .live-dot {
+      width: 7px;
+      height: 7px;
+      background-color: var(--success);
+      border-radius: 50%;
+      animation: pulse 1.6s infinite;
+    }
+
+    @keyframes pulse {
+      0% { transform: scale(0.95); opacity: 0.8; }
+      50% { transform: scale(1.2); opacity: 1; }
+      100% { transform: scale(0.95); opacity: 0.8; }
+    }
+
+    /* ---------------- Form Elements ---------------- */
+    .widget-form {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .label-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .form-label {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .sample-btn {
+      background: none;
+      border: none;
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+      padding: 0;
+    }
+
+    .sample-btn:hover {
+      color: var(--accent-hover);
+    }
+
+    .form-input, .form-select {
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 0.88rem;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      background: #ffffff;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.15s ease;
+      font-family: inherit;
+    }
+
+    .form-input:focus, .form-select:focus {
+      border-color: var(--border-focus);
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.12);
+    }
+
+    .form-select {
+      cursor: pointer;
+      appearance: none;
+      background-image: url("data:image/svg+xml;charset=US-ASCII,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20width%3D%22292.4%22%20height%3D%22292.4%22%3E%3Cpath%20fill%3D%22%2364748b%22%20d%3D%22M287%2069.4a17.6%2017.6%200%200%200-13-5.4H18.4c-5%200-9.3%201.8-12.9%205.4A17.6%2017.6%200%200%200%200%2082.2c0%205%201.8%209.3%205.4%2012.9l128%20127.9c3.6%203.6%207.8%205.4%2012.8%205.4s9.2-1.8%2012.8-5.4L287%2095c3.5-3.5%205.4-7.8%205.4-12.8%200-5-1.9-9.2-5.5-12.8z%22%2F%3E%3C%2Fsvg%3E");
+      background-repeat: no-repeat;
+      background-position: right 10px top 50%;
+      background-size: 9px auto;
+      padding-right: 28px;
+    }
+
+    .phone-box {
+      display: flex;
+      align-items: center;
+      position: relative;
+    }
+
+    .phone-prefix {
+      position: absolute;
+      left: 10px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #64748b;
+      border-right: 1px solid #cbd5e1;
+      padding-right: 6px;
+      line-height: 1.2;
+    }
+
+    .phone-input {
+      padding-left: 54px;
+    }
+
+    .roll-input {
+      font-family: monospace;
+      letter-spacing: 0.5px;
+    }
+
+    /* ---------------- Submit Button ---------------- */
+    .submit-button {
+      background: var(--primary);
+      color: #ffffff;
+      border: none;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      border-radius: var(--radius-sm);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s;
+      margin-top: 4px;
+    }
+
+    .submit-button:hover {
+      background: var(--primary-hover);
+    }
+
+    .submit-button:disabled {
+      opacity: 0.65;
+      cursor: not-allowed;
+    }
+
+    .btn-loader {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-top-color: #ffffff;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+      display: none;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* ---------------- Result View Inside Card ---------------- */
+    .result-box-wrapper {
+      display: none;
+      margin-top: 14px;
+      padding-top: 14px;
+      border-top: 1px dashed var(--border);
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-4px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .res-card {
+      border-radius: var(--radius-sm);
+      padding: 14px;
+      border: 1.5px solid;
+    }
+
+    .res-card.qualified {
+      background: #f0fdf4;
+      border-color: #86efac;
+    }
+
+    .res-card.not-qualified {
+      background: #fef2f2;
+      border-color: #fca5a5;
+    }
+
+    .res-card.awaited {
+      background: #eff6ff;
+      border-color: #93c5fd;
+    }
+
+    .res-badge {
+      font-size: 0.7rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      padding: 2px 6px;
+      border-radius: 4px;
+      display: inline-block;
+      margin-bottom: 6px;
+    }
+
+    .qualified .res-badge {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .not-qualified .res-badge {
+      background: #fee2e2;
+      color: #b91c1c;
+    }
+
+    .awaited .res-badge {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .res-title {
+      font-size: 1rem;
+      font-weight: 700;
+      margin-bottom: 4px;
+    }
+
+    .qualified .res-title { color: #166534; }
+    .not-qualified .res-title { color: #991b1b; }
+    .awaited .res-title { color: #1e40af; }
+
+    .res-desc {
+      font-size: 0.78rem;
+      color: #475569;
+      line-height: 1.4;
+      margin-bottom: 10px;
+    }
+
+    .res-details {
+      background: #ffffff;
+      border: 1px solid rgba(0, 0, 0, 0.06);
+      border-radius: 4px;
+      padding: 8px 10px;
+      font-size: 0.78rem;
+      margin-bottom: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+
+    .res-row {
+      display: flex;
+      justify-content: space-between;
+    }
+
+    .res-row .k { color: var(--text-muted); }
+    .res-row .v { font-weight: 600; color: var(--text-main); font-family: monospace; }
+
+    .res-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    .res-btn, .btn-res-action {
+      flex: 1;
+      padding: 7px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+    }
+
+    .res-btn:hover, .btn-res-action:hover {
+      background: #f8fafc;
+    }
+
+    .res-btn.primary, .btn-res-action.primary {
+      background: var(--success);
+      color: #ffffff;
+      border-color: var(--success);
+    }
+
+    .res-btn.primary:hover, .btn-res-action.primary:hover {
+      background: #047857;
+    }
+
+    /* ---------------- Footer ---------------- */
+    .widget-footer {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 14px;
+      padding-top: 10px;
+      font-size: 0.74rem;
+      color: var(--text-muted);
+    }
+
+    .footer-link, .admin-link {
+      color: var(--accent);
+      text-decoration: none;
+      background: none;
+      border: none;
+      font-size: 0.74rem;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .footer-link:hover, .admin-link:hover {
+      text-decoration: underline;
+    }
+
+    .footer-sep {
+      color: #cbd5e1;
+    }
+
+    /* ---------------- Admin Modal ---------------- */
+    .modal-backdrop {
+      display: none;
+      position: fixed;
+      inset: 0;
+      background: rgba(15, 23, 42, 0.45);
+      backdrop-filter: blur(2px);
+      z-index: 100;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-box {
+      background: #ffffff;
+      border-radius: var(--radius);
+      width: 100%;
+      max-width: 360px;
+      padding: 16px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid var(--border);
+      padding-bottom: 8px;
+    }
+
+    .modal-head h3 {
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .modal-close-icon {
+      background: none;
+      border: none;
+      font-size: 1.3rem;
+      cursor: pointer;
+      color: var(--text-muted);
+    }
+
+    .modal-content {
+      padding-top: 12px;
+    }
+
+    .stat-cards {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 12px;
+    }
+
+    .stat-card {
+      flex: 1;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: 4px;
+      text-align: center;
+      padding: 6px 4px;
+      font-size: 0.72rem;
+      font-weight: 600;
+    }
+
+    .stat-card span {
+      display: block;
+      font-size: 1.1rem;
+      color: var(--primary);
+    }
+
+    .stat-card.green span { color: var(--success); }
+    .stat-card.blue span { color: var(--accent); }
+
+    .csv-btn {
+      width: 100%;
+      background: var(--success);
+      color: #ffffff;
+      border: none;
+      padding: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-bottom: 14px;
+    }
+
+    .btn-action {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 10px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    .btn-action.blue {
+      background: var(--accent);
+      color: #ffffff;
+      border-color: var(--accent);
+    }
+  </style>
 </head>
 <body>
 
   <!-- Small Embeddable Widget Container -->
-  <div class="widget-wrapper">
-    <div class="result-widget">
+  <div class="widget-container">
+    <div class="widget-card">
 
-      <!-- Widget Header -->
+      <!-- Header -->
       <div class="widget-header">
-        <div class="widget-title-row">
-          <div class="widget-icon">🚆</div>
+        <div class="header-brand">
+          <span class="header-icon">🚆</span>
           <div>
-            <h2 class="widget-title">RRB Group D Result</h2>
-            <div class="widget-subtitle">CEN 09/2025 • CBT to PET Shortlist</div>
+            <h2 class="header-title">RRB Group D Result</h2>
+            <div class="header-sub">CEN 09/2025 • CBT to PET Shortlist</div>
           </div>
         </div>
-        <span class="live-tag">🟢 Bhopal Live</span>
+        <div class="live-badge">
+          <span class="live-dot"></span>
+          <span>Bhopal Live</span>
+        </div>
       </div>
 
-      <!-- Result Checker Form -->
+      <!-- Result Form -->
       <form id="resultForm" class="widget-form">
 
-        <!-- Zone Selection -->
-        <div class="form-row">
-          <label for="rrbZone" class="label">Select Zone</label>
-          <select id="rrbZone" class="input select" required>
+        <!-- Zone -->
+        <div class="form-group">
+          <label for="rrbZone" class="form-label">Select RRB Zone</label>
+          <select id="rrbZone" class="form-select" required>
             <option value="Bhopal" selected>RRB Bhopal (Result Live)</option>
             <option value="Ahmedabad">RRB Ahmedabad (Awaited)</option>
             <option value="Ajmer">RRB Ajmer (Awaited)</option>
@@ -55,45 +576,45 @@
           </select>
         </div>
 
-        <!-- Candidate Full Name -->
-        <div class="form-row">
-          <label for="candidateName" class="label">Full Name</label>
-          <input type="text" id="candidateName" class="input" placeholder="Enter candidate name" required autocomplete="name">
+        <!-- Full Name -->
+        <div class="form-group">
+          <label for="candidateName" class="form-label">Candidate Name</label>
+          <input type="text" id="candidateName" class="form-input" placeholder="Enter full name" required autocomplete="name">
         </div>
 
         <!-- Mobile Number -->
-        <div class="form-row">
-          <label for="mobileNumber" class="label">Mobile Number</label>
-          <div class="phone-group">
-            <span class="phone-code">+91</span>
-            <input type="tel" id="mobileNumber" class="input phone-input" placeholder="10-digit number" maxlength="10" required autocomplete="tel">
+        <div class="form-group">
+          <label for="mobileNumber" class="form-label">Mobile Number</label>
+          <div class="phone-box">
+            <span class="phone-prefix">+91</span>
+            <input type="tel" id="mobileNumber" class="form-input phone-input" placeholder="10-digit number" maxlength="10" required autocomplete="tel">
           </div>
         </div>
 
         <!-- Roll Number -->
-        <div class="form-row">
-          <div class="label-with-action">
-            <label for="rollNumber" class="label">Roll Number (15 digits)</label>
-            <button type="button" id="btnSampleRoll" class="sample-link">Sample Roll</button>
+        <div class="form-group">
+          <div class="label-row">
+            <label for="rollNumber" class="form-label">Roll Number (15 digits)</label>
+            <button type="button" id="btnSampleRoll" class="sample-btn">Sample Roll</button>
           </div>
-          <input type="text" id="rollNumber" class="input roll-input" placeholder="e.g. 159251120672095" maxlength="16" required>
+          <input type="text" id="rollNumber" class="form-input roll-input" placeholder="e.g. 159251120672095" maxlength="16" required>
         </div>
 
         <!-- Submit Button -->
-        <button type="submit" id="btnSubmit" class="submit-btn">
-          <span id="btnSpinner" class="spinner"></span>
+        <button type="submit" id="btnSubmit" class="submit-button">
+          <span id="btnSpinner" class="btn-loader"></span>
           <span id="btnText">Check Result</span>
         </button>
 
       </form>
 
-      <!-- Embedded Result Output -->
-      <div id="resultContainer" class="widget-result"></div>
+      <!-- Embedded Result Output Container -->
+      <div id="resultContainer" class="result-box-wrapper"></div>
 
       <!-- Compact Footer -->
       <div class="widget-footer">
         <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="footer-link">Official Bhopal PDF</a>
-        <span class="sep">•</span>
+        <span class="footer-sep">•</span>
         <button type="button" id="btnOpenAdmin" class="admin-link">⚙️ Leads &amp; Sheet</button>
       </div>
 
@@ -101,27 +622,27 @@
   </div>
 
   <!-- Admin Modal for Sheet / CSV -->
-  <div id="adminModal" class="modal-overlay">
-    <div class="modal-card">
-      <div class="modal-header">
+  <div id="adminModal" class="modal-backdrop">
+    <div class="modal-box">
+      <div class="modal-head">
         <h3>Google Sheet &amp; Leads</h3>
-        <button id="btnCloseAdmin" class="modal-close">&times;</button>
+        <button id="btnCloseAdmin" class="modal-close-icon">&times;</button>
       </div>
-      <div class="modal-body">
-        <div class="stat-row">
-          <div class="stat-pill"><span id="statTotalLeads">0</span> Checks</div>
-          <div class="stat-pill success"><span id="statQualifiedLeads">0</span> Qualified</div>
-          <div class="stat-pill info"><span id="statAwaitedLeads">0</span> Alerts</div>
+      <div class="modal-content">
+        <div class="stat-cards">
+          <div class="stat-card"><span id="statTotalLeads">0</span> Checks</div>
+          <div class="stat-card green"><span id="statQualifiedLeads">0</span> Qualified</div>
+          <div class="stat-card blue"><span id="statAwaitedLeads">0</span> Alerts</div>
         </div>
-        <div style="margin-top: 14px;">
-          <button id="btnExportCsv" class="export-btn">📥 Download Leads CSV</button>
+        <div>
+          <button id="btnExportCsv" class="csv-btn">📥 Download Leads CSV</button>
         </div>
-        <div style="margin-top: 16px;">
-          <label class="label">Google Sheet Webhook URL</label>
-          <div style="display:flex; gap:6px; margin-top:4px;">
-            <input type="url" id="adminWebhookUrl" class="input" style="font-size:0.8rem;">
-            <button id="btnSaveWebhook" class="btn-sm">Save</button>
-            <button id="btnTestWebhook" class="btn-sm btn-accent">Test</button>
+        <div>
+          <label class="form-label" style="display:block; margin-bottom:4px;">Webhook URL</label>
+          <div style="display:flex; gap:6px;">
+            <input type="url" id="adminWebhookUrl" class="form-input" style="font-size:0.75rem;">
+            <button id="btnSaveWebhook" class="btn-action">Save</button>
+            <button id="btnTestWebhook" class="btn-action blue">Test</button>
           </div>
           <div id="webhookSaveStatus" style="font-size:0.75rem; min-height:16px; margin-top:4px;"></div>
         </div>
@@ -130,8 +651,8 @@
   </div>
 
   <!-- Bhopal Database & Application Logic -->
-  <script src="./bhopal_rolls.js"></script>
-  <script src="./app.js"></script>
+  <script src="./bhopal_rolls.js?v=3"></script>
+  <script src="./app.js?v=3"></script>
 
 </body>
 </html>
