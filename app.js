@@ -5,8 +5,8 @@
 
 // Global configuration
 const APP_CONFIG = {
-  // If you deploy a Google Apps Script Web App, paste its URL below or configure it in the Admin Settings modal in the app!
-  DEFAULT_GOOGLE_SHEET_WEBHOOK_URL: "",
+  // Configured Google Sheet Webhook URL
+  DEFAULT_GOOGLE_SHEET_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbzNDOMdJxM_O55Tn9a-8Iwzh3t-WchQJSUu-opfCVF2Ys2LZsZnN81VHH5WuwEAK0vd/exec",
   STORAGE_KEY_LEADS: "rrb_group_d_leads_v1",
   STORAGE_KEY_WEBHOOK: "rrb_sheet_webhook_url",
   ACTIVE_ZONE: "Bhopal",
@@ -738,3 +738,4 @@ function escapeHtml(str) {
     }
   });
 }
+
