@@ -1,53 +1,31 @@
 /**
- * RRB Group D (Level-1) Result Checker & Lead Capture Engine
- * Official CEN 09/2025 Level-1 Recruitment
+ * RRB Group D (Level-1) Result Checker Widget
+ * CEN 09/2025 Level-1 Posts
+ * Active Zones: RRB Bhopal (2,294) & RRB Patna (1,621)
  */
 
-// Global configuration
 const APP_CONFIG = {
-  // Configured Google Sheet Webhook URL
   DEFAULT_GOOGLE_SHEET_WEBHOOK_URL: "https://script.google.com/macros/s/AKfycbzNDOMdJxM_O55Tn9a-8Iwzh3t-WchQJSUu-opfCVF2Ys2LZsZnN81VHH5WuwEAK0vd/exec",
-  STORAGE_KEY_LEADS: "rrb_group_d_leads_v1",
-  STORAGE_KEY_WEBHOOK: "rrb_sheet_webhook_url",
-  ACTIVE_ZONE: "Bhopal",
-  ACTIVE_ZONE_COUNT: 2294
+  STORAGE_KEY_LEADS: "rrb_group_d_leads_v1"
 };
 
-// State
-let qualifiedRollsSet = null;
+let bhopalRolls = null;
+let patnaRolls = null;
 
-// Initialize on DOM Ready
 document.addEventListener("DOMContentLoaded", () => {
-  initRollsDatabase();
+  initDatabases();
   setupEventListeners();
-  updateAdminStats();
-  checkSavedWebhook();
 });
 
-/**
- * Initialize Roll Numbers Set
- */
-function initRollsDatabase() {
-  if (window.BHOPAL_QUALIFIED_ROLLS && window.BHOPAL_QUALIFIED_ROLLS instanceof Set) {
-    qualifiedRollsSet = window.BHOPAL_QUALIFIED_ROLLS;
-    console.log(`Database ready: ${qualifiedRollsSet.size} roll numbers loaded.`);
-  } else {
-    // Fallback: fetch JSON if script wasn't loaded synchronously
-    fetch("./bhopal_rolls.json")
-      .then(res => res.json())
-      .then(data => {
-        qualifiedRollsSet = new Set(data);
-        console.log(`Database loaded via fetch: ${qualifiedRollsSet.size} roll numbers.`);
-      })
-      .catch(err => {
-        console.warn("Could not load bhopal_rolls.json fallback:", err);
-      });
+function initDatabases() {
+  if (window.BHOPAL_QUALIFIED_ROLLS instanceof Set) {
+    bhopalRolls = window.BHOPAL_QUALIFIED_ROLLS;
+  }
+  if (window.PATNA_QUALIFIED_ROLLS instanceof Set) {
+    patnaRolls = window.PATNA_QUALIFIED_ROLLS;
   }
 }
 
-/**
- * Setup All Event Listeners
- */
 function setupEventListeners() {
   const form = document.getElementById("resultForm");
   const rollInput = document.getElementById("rollNumber");
@@ -55,115 +33,57 @@ function setupEventListeners() {
   const zoneSelect = document.getElementById("rrbZone");
   const sampleBtn = document.getElementById("btnSampleRoll");
 
-  // Zone Change Event: show alert if awaited zone
-  if (zoneSelect) {
-    zoneSelect.addEventListener("change", handleZoneChange);
-  }
-
-  // Format and sanitize mobile number
+  // Phone sanitization (digits only, max 10)
   if (phoneInput) {
     phoneInput.addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/\D/g, "").slice(0, 10);
     });
   }
 
-  // Format and sanitize roll number
+  // Roll sanitization (digits only, max 16)
   if (rollInput) {
     rollInput.addEventListener("input", (e) => {
       e.target.value = e.target.value.replace(/\D/g, "").slice(0, 16);
     });
   }
 
-  // Sample roll button
+  // Sample roll helper
   if (sampleBtn) {
     sampleBtn.addEventListener("click", () => {
-      document.getElementById("candidateName").value = "Rahul Verma";
+      const zone = zoneSelect ? zoneSelect.value : "Bhopal";
+      document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
-      document.getElementById("rollNumber").value = "159251120672095"; // First qualified Bhopal roll
-      document.getElementById("rrbZone").value = "Bhopal";
-      handleZoneChange();
+
+      if (zone === "Patna") {
+        document.getElementById("rollNumber").value = "269251162810102"; // Qualified Patna roll
+      } else {
+        document.getElementById("rollNumber").value = "159251120672095"; // Qualified Bhopal roll
+      }
     });
   }
 
-  // Form submission
+  // Dynamic placeholder on zone change
+  if (zoneSelect) {
+    zoneSelect.addEventListener("change", () => {
+      const zone = zoneSelect.value;
+      if (rollInput) {
+        if (zone === "Patna") {
+          rollInput.placeholder = "e.g. 269251162810102";
+        } else if (zone === "Bhopal") {
+          rollInput.placeholder = "e.g. 159251120672095";
+        } else {
+          rollInput.placeholder = "Enter 15-digit roll number";
+        }
+      }
+    });
+  }
+
+  // Form submit
   if (form) {
     form.addEventListener("submit", handleFormSubmit);
   }
-
-  // Admin Modal
-  const openAdminBtn = document.getElementById("btnOpenAdmin");
-  const closeAdminBtn = document.getElementById("btnCloseAdmin");
-  const modalOverlay = document.getElementById("adminModal");
-  const saveWebhookBtn = document.getElementById("btnSaveWebhook");
-  const testWebhookBtn = document.getElementById("btnTestWebhook");
-  const exportCsvBtn = document.getElementById("btnExportCsv");
-  const copyScriptBtn = document.getElementById("btnCopyScriptCode");
-
-  if (openAdminBtn && modalOverlay) {
-    openAdminBtn.addEventListener("click", () => {
-      updateAdminStats();
-      modalOverlay.style.display = "flex";
-    });
-  }
-
-  if (closeAdminBtn && modalOverlay) {
-    closeAdminBtn.addEventListener("click", () => {
-      modalOverlay.style.display = "none";
-    });
-  }
-
-  if (modalOverlay) {
-    modalOverlay.addEventListener("click", (e) => {
-      if (e.target === modalOverlay) modalOverlay.style.display = "none";
-    });
-  }
-
-  if (saveWebhookBtn) {
-    saveWebhookBtn.addEventListener("click", saveWebhookUrl);
-  }
-
-  if (testWebhookBtn) {
-    testWebhookBtn.addEventListener("click", testWebhookConnection);
-  }
-
-  if (exportCsvBtn) {
-    exportCsvBtn.addEventListener("click", exportLeadsToCsv);
-  }
-
-  if (copyScriptBtn) {
-    copyScriptBtn.addEventListener("click", copyAppsScriptCode);
-  }
 }
 
-/**
- * Handle Zone Change
- */
-function handleZoneChange() {
-  const zoneSelect = document.getElementById("rrbZone");
-  const zoneAlert = document.getElementById("zoneAlertBox");
-  if (!zoneSelect || !zoneAlert) return;
-
-  const selectedZone = zoneSelect.value;
-  if (selectedZone === "Bhopal") {
-    zoneAlert.innerHTML = `
-      <span style="color: #059669; font-weight: 700;">🟢 Result Live</span>:
-      Official CBT Merit List for RRB Bhopal is declared (2,294 candidates shortlisted for PET).
-    `;
-    zoneAlert.style.borderColor = "#86efac";
-    zoneAlert.style.background = "#f0fdf4";
-  } else {
-    zoneAlert.innerHTML = `
-      <span style="color: #d97706; font-weight: 700;">⏳ Result Awaited</span>:
-      RRB ${selectedZone} result is expected soon. Enter details to check and get instant notification!
-    `;
-    zoneAlert.style.borderColor = "#fcd34d";
-    zoneAlert.style.background = "#fffbeb";
-  }
-}
-
-/**
- * Handle Result Verification & Lead Capture
- */
 async function handleFormSubmit(e) {
   e.preventDefault();
 
@@ -180,9 +100,8 @@ async function handleFormSubmit(e) {
   const rollNumber = rollInput.value.trim();
   const zone = zoneSelect.value;
 
-  // Validations
   if (!name || name.length < 2) {
-    alert("Please enter a valid candidate full name.");
+    alert("Please enter a valid candidate name.");
     nameInput.focus();
     return;
   }
@@ -194,7 +113,7 @@ async function handleFormSubmit(e) {
   }
 
   if (!rollNumber || rollNumber.length < 10) {
-    alert("Please enter a valid Roll Number.");
+    alert("Please enter a valid roll number.");
     rollInput.focus();
     return;
   }
@@ -202,16 +121,28 @@ async function handleFormSubmit(e) {
   // Button loading state
   if (submitBtn) submitBtn.disabled = true;
   if (btnSpinner) btnSpinner.style.display = "inline-block";
-  if (btnText) btnText.textContent = "Verifying with Merit List...";
+  if (btnText) btnText.textContent = "Checking...";
 
-  // Determine Result Status
-  let status = "Not Qualified";
+  let status = "Not in Shortlist";
   let isQualified = false;
   let isAwaitedZone = false;
+  let zoneTitle = `RRB ${zone}`;
+  let pdfUrl = "";
 
   if (zone === "Bhopal") {
-    // Check against qualified Set
-    if (qualifiedRollsSet && qualifiedRollsSet.has(rollNumber)) {
+    zoneTitle = "RRB Bhopal (WCR)";
+    pdfUrl = "./Bhopal.pdf";
+    if (window.BHOPAL_QUALIFIED_ROLLS && window.BHOPAL_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Patna") {
+    zoneTitle = "RRB Patna (ECR)";
+    pdfUrl = "./Patna.pdf";
+    if (window.PATNA_QUALIFIED_ROLLS && window.PATNA_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
@@ -223,50 +154,42 @@ async function handleFormSubmit(e) {
     isAwaitedZone = true;
   }
 
-  const timestamp = new Date().toISOString();
   const leadData = {
     timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
     name,
-    mobile: mobile,
+    mobile: mobile, // Clean 10 digits to prevent formula error in Google Sheets
     rollNumber,
-    zone: `RRB ${zone}`,
+    zone: zoneTitle,
     status,
     userAgent: navigator.userAgent
   };
 
-  // 1. Save to local storage leads backup
-  saveLeadLocally(leadData);
-
-  // 2. Transmit to Google Sheet Webhook (asynchronously)
+  // 1. Silent Google Sheet Webhook Dispatch
   sendToGoogleSheet(leadData);
 
-  // Small delay for smooth UI transition
-  await new Promise(resolve => setTimeout(resolve, 600));
+  // 2. Local storage backup
+  saveLeadLocally(leadData);
+
+  await new Promise(resolve => setTimeout(resolve, 400));
 
   // Reset button state
   if (submitBtn) submitBtn.disabled = false;
   if (btnSpinner) btnSpinner.style.display = "none";
   if (btnText) btnText.textContent = "Check Result";
 
-  // Display Result
+  // Display Result Card
   displayResultCard({
     name,
     mobile,
     rollNumber,
-    zone,
+    zone: zoneTitle,
     isQualified,
     isAwaitedZone,
-    status
+    pdfUrl
   });
-
-  // Update Admin Stats counter
-  updateAdminStats();
 }
 
-/**
- * Display Result Card (Compact Widget)
- */
-function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwaitedZone, status }) {
+function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwaitedZone, pdfUrl }) {
   const container = document.getElementById("resultContainer");
   if (!container) return;
 
@@ -277,14 +200,14 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
       <div class="res-card qualified">
         <span class="res-badge">✓ Qualified for PET</span>
         <h3 class="res-title">Congratulations, ${escapeHtml(name)}!</h3>
-        <p class="res-desc">Your roll number is shortlisted for the Physical Efficiency Test (PET) under RRB Bhopal.</p>
+        <p class="res-desc">Your roll number is shortlisted for the Physical Efficiency Test (PET) under <strong>${escapeHtml(zone)}</strong>.</p>
         <div class="res-details">
           <div class="res-row"><span class="k">Roll No:</span><span class="v" style="color:#059669;">${escapeHtml(rollNumber)}</span></div>
-          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB Bhopal (WCR)</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">${escapeHtml(zone)}</span></div>
           <div class="res-row"><span class="k">Status:</span><span class="v" style="color:#059669;">Shortlisted ✓</span></div>
         </div>
         <div class="res-actions">
-          <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="btn-res-action primary">📥 Official PDF</a>
+          <a href="${pdfUrl}" download class="btn-res-action primary">📥 Official Merit PDF</a>
           <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Another</button>
         </div>
       </div>
@@ -295,15 +218,15 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
     html = `
       <div class="res-card awaited">
         <span class="res-badge">⏳ Result Awaited</span>
-        <h3 class="res-title">RRB ${escapeHtml(zone)} Result Soon</h3>
-        <p class="res-desc">Results for RRB ${escapeHtml(zone)} are expected shortly. Your details have been recorded for instant notification!</p>
+        <h3 class="res-title">${escapeHtml(zone)} Result Soon</h3>
+        <p class="res-desc">Merit list for ${escapeHtml(zone)} is expected shortly. Your details have been recorded for instant notification!</p>
         <div class="res-details">
-          <div class="res-row"><span class="k">Mobile:</span><span class="v">+91 ${escapeHtml(mobile)}</span></div>
+          <div class="res-row"><span class="k">Mobile:</span><span class="v">${escapeHtml(mobile)}</span></div>
           <div class="res-row"><span class="k">Roll No:</span><span class="v">${escapeHtml(rollNumber)}</span></div>
-          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB ${escapeHtml(zone)}</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">${escapeHtml(zone)}</span></div>
         </div>
         <div class="res-actions">
-          <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Bhopal</button>
+          <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Live Zones</button>
         </div>
       </div>
     `;
@@ -313,13 +236,13 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
       <div class="res-card not-qualified">
         <span class="res-badge">Not in Current Shortlist</span>
         <h3 class="res-title">Roll Not Found in Shortlist</h3>
-        <p class="res-desc">Roll number <strong>${escapeHtml(rollNumber)}</strong> was not found in the current PET merit list for RRB Bhopal.</p>
+        <p class="res-desc">Roll number <strong>${escapeHtml(rollNumber)}</strong> was not found in the current PET merit list for ${escapeHtml(zone)}.</p>
         <div class="res-details">
           <div class="res-row"><span class="k">Roll No:</span><span class="v">${escapeHtml(rollNumber)}</span></div>
-          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB Bhopal</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">${escapeHtml(zone)}</span></div>
         </div>
         <div class="res-actions">
-          <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="btn-res-action">📥 View PDF</a>
+          <a href="${pdfUrl}" download class="btn-res-action">📥 View Merit PDF</a>
           <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Another</button>
         </div>
       </div>
@@ -331,9 +254,6 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
   container.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
-/**
- * Reset Check Form
- */
 function resetCheckForm() {
   const container = document.getElementById("resultContainer");
   if (container) container.style.display = "none";
@@ -344,60 +264,26 @@ function resetCheckForm() {
   }
 }
 
-/**
- * Local Storage Management for Leads
- */
-function saveLeadLocally(leadData) {
-  try {
-    const raw = localStorage.getItem(APP_CONFIG.STORAGE_KEY_LEADS);
-    const list = raw ? JSON.parse(raw) : [];
-    list.unshift(leadData); // Add latest to beginning
-    localStorage.setItem(APP_CONFIG.STORAGE_KEY_LEADS, JSON.stringify(list));
-  } catch (e) {
-    console.error("Local storage error:", e);
-  }
-}
-
-function getStoredLeads() {
-  try {
-    const raw = localStorage.getItem(APP_CONFIG.STORAGE_KEY_LEADS);
-    return raw ? JSON.parse(raw) : [];
-  } catch (e) {
-    return [];
-  }
-}
-
-/**
- * Send Data to Google Sheets Webhook
- */
 function sendToGoogleSheet(leadData) {
-  const webhookUrl = localStorage.getItem(APP_CONFIG.STORAGE_KEY_WEBHOOK) || APP_CONFIG.DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+  const webhookUrl = APP_CONFIG.DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
+  if (!webhookUrl || !webhookUrl.startsWith("http")) return;
 
-  if (!webhookUrl || !webhookUrl.startsWith("http")) {
-    console.log("No Google Sheet Webhook configured yet. Lead saved in local storage.");
-    return;
-  }
-
-  // 1. Try sending via POST with no-cors mode (standard for Google Apps Script Web Apps)
   try {
     fetch(webhookUrl, {
       method: "POST",
       mode: "no-cors",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      headers: { "Content-Type": "application/json" },
       body: JSON.stringify(leadData)
     }).catch(err => {
-      console.warn("POST to Google Sheet failed, trying GET fallback:", err);
-      // Fallback: send via GET query string
-      sendViaGetFallback(webhookUrl, leadData);
+      console.warn("Sheet post failed, trying GET fallback:", err);
+      sendViaGet(webhookUrl, leadData);
     });
   } catch (err) {
-    sendViaGetFallback(webhookUrl, leadData);
+    sendViaGet(webhookUrl, leadData);
   }
 }
 
-function sendViaGetFallback(webhookUrl, leadData) {
+function sendViaGet(webhookUrl, leadData) {
   try {
     const params = new URLSearchParams({
       timestamp: leadData.timestamp,
@@ -408,162 +294,19 @@ function sendViaGetFallback(webhookUrl, leadData) {
       status: leadData.status
     });
     fetch(`${webhookUrl}?${params.toString()}`, { mode: "no-cors" });
-  } catch (e) {
-    console.error("Webhook fallback error:", e);
-  }
+  } catch (e) {}
 }
 
-/**
- * Admin Panel & Webhook Management
- */
-function checkSavedWebhook() {
-  const savedUrl = localStorage.getItem(APP_CONFIG.STORAGE_KEY_WEBHOOK) || APP_CONFIG.DEFAULT_GOOGLE_SHEET_WEBHOOK_URL;
-  const input = document.getElementById("adminWebhookUrl");
-  if (input && savedUrl) {
-    input.value = savedUrl;
-  }
-}
-
-function saveWebhookUrl() {
-  const input = document.getElementById("adminWebhookUrl");
-  const statusSpan = document.getElementById("webhookSaveStatus");
-  if (!input) return;
-
-  const url = input.value.trim();
-  localStorage.setItem(APP_CONFIG.STORAGE_KEY_WEBHOOK, url);
-
-  if (statusSpan) {
-    statusSpan.textContent = "Saved successfully!";
-    statusSpan.style.color = "#059669";
-    setTimeout(() => { statusSpan.textContent = ""; }, 3000);
-  }
-}
-
-async function testWebhookConnection() {
-  const input = document.getElementById("adminWebhookUrl");
-  const statusSpan = document.getElementById("webhookSaveStatus");
-  const url = input ? input.value.trim() : "";
-
-  if (!url || !url.startsWith("http")) {
-    alert("Please enter a valid Google Apps Script Web App URL first.");
-    return;
-  }
-
-  if (statusSpan) {
-    statusSpan.textContent = "Sending test row...";
-    statusSpan.style.color = "#2563eb";
-  }
-
-  const testPayload = {
-    timestamp: new Date().toLocaleString("en-IN"),
-    name: "TEST USER (System Check)",
-    mobile: "+91 9999999999",
-    rollNumber: "159251120672095",
-    zone: "RRB Bhopal",
-    status: "Webhook Connection Test",
-    userAgent: navigator.userAgent
-  };
-
+function saveLeadLocally(leadData) {
   try {
-    await fetch(url, {
-      method: "POST",
-      mode: "no-cors",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(testPayload)
-    });
-
-    if (statusSpan) {
-      statusSpan.textContent = "✓ Test row sent! Check your Google Sheet.";
-      statusSpan.style.color = "#059669";
-    }
-  } catch (err) {
-    if (statusSpan) {
-      statusSpan.textContent = "Error testing webhook: " + err.message;
-      statusSpan.style.color = "#dc2626";
-    }
-  }
+    const raw = localStorage.getItem(APP_CONFIG.STORAGE_KEY_LEADS);
+    const list = raw ? JSON.parse(raw) : [];
+    list.unshift(leadData);
+    localStorage.setItem(APP_CONFIG.STORAGE_KEY_LEADS, JSON.stringify(list.slice(0, 100)));
+  } catch (e) {}
 }
 
-function updateAdminStats() {
-  const leads = getStoredLeads();
-  const totalEl = document.getElementById("statTotalLeads");
-  const qualifiedEl = document.getElementById("statQualifiedLeads");
-  const awaitedEl = document.getElementById("statAwaitedLeads");
-
-  if (totalEl) totalEl.textContent = leads.length;
-  if (qualifiedEl) {
-    const qCount = leads.filter(l => l.status && l.status.includes("Qualified")).length;
-    qualifiedEl.textContent = qCount;
-  }
-  if (awaitedEl) {
-    const aCount = leads.filter(l => l.status && l.status.includes("Awaited")).length;
-    awaitedEl.textContent = aCount;
-  }
-}
-
-/**
- * Export Leads to CSV File
- */
-function exportLeadsToCsv() {
-  const leads = getStoredLeads();
-  if (leads.length === 0) {
-    alert("No lead entries recorded yet in local storage.");
-    return;
-  }
-
-  const headers = ["Timestamp", "Candidate Name", "Mobile Number", "Roll Number", "Zone", "Status", "User Agent"];
-  const rows = leads.map(l => [
-    `"${(l.timestamp || "").replace(/"/g, '""')}"`,
-    `"${(l.name || "").replace(/"/g, '""')}"`,
-    `"${(l.mobile || "").replace(/"/g, '""')}"`,
-    `"${(l.rollNumber || "").replace(/"/g, '""')}"`,
-    `"${(l.zone || "").replace(/"/g, '""')}"`,
-    `"${(l.status || "").replace(/"/g, '""')}"`,
-    `"${(l.userAgent || "").replace(/"/g, '""')}"`
-  ]);
-
-  const csvContent = "data:text/csv;charset=utf-8," + [headers.join(","), ...rows.map(r => r.join(","))].join("\n");
-  const encodedUri = encodeURI(csvContent);
-  const link = document.createElement("a");
-  link.setAttribute("href", encodedUri);
-  link.setAttribute("download", `RRB_Group_D_Candidate_Leads_${new Date().toISOString().slice(0, 10)}.csv`);
-  document.body.appendChild(link);
-  link.click();
-  document.body.removeChild(link);
-}
-
-/**
- * Copy Google Apps Script Code
- */
-function copyAppsScriptCode() {
-  const codeEl = document.getElementById("appsScriptCodeSnippet");
-  if (!codeEl) return;
-  const text = codeEl.innerText;
-  navigator.clipboard.writeText(text).then(() => {
-    const copyBtn = document.getElementById("btnCopyScriptCode");
-    if (copyBtn) {
-      const original = copyBtn.textContent;
-      copyBtn.textContent = "✓ Copied!";
-      setTimeout(() => { copyBtn.textContent = original; }, 2000);
-    }
-  });
-}
-
-/**
- * Lightweight Self-Contained Confetti Animation
- */
 function triggerCelebration() {
-  // If external canvas-confetti library is loaded, use it
-  if (typeof confetti === "function") {
-    confetti({
-      particleCount: 100,
-      spread: 70,
-      origin: { y: 0.6 }
-    });
-    return;
-  }
-
-  // Pure lightweight fallback confetti on canvas
   const canvas = document.createElement("canvas");
   canvas.style.position = "fixed";
   canvas.style.top = "0";
@@ -581,16 +324,16 @@ function triggerCelebration() {
   const particles = [];
   const colors = ["#10b981", "#3b82f6", "#f59e0b", "#ec4899", "#8b5cf6", "#14b8a6"];
 
-  for (let i = 0; i < 80; i++) {
+  for (let i = 0; i < 70; i++) {
     particles.push({
       x: canvas.width / 2,
-      y: canvas.height * 0.4,
-      vx: (Math.random() - 0.5) * 14,
-      vy: (Math.random() - 0.7) * 16,
-      size: Math.random() * 8 + 4,
+      y: canvas.height * 0.45,
+      vx: (Math.random() - 0.5) * 12,
+      vy: (Math.random() - 0.7) * 14,
+      size: Math.random() * 7 + 4,
       color: colors[Math.floor(Math.random() * colors.length)],
       alpha: 1,
-      decay: Math.random() * 0.015 + 0.015
+      decay: Math.random() * 0.02 + 0.015
     });
   }
 
@@ -600,7 +343,7 @@ function triggerCelebration() {
     particles.forEach(p => {
       p.x += p.vx;
       p.y += p.vy;
-      p.vy += 0.35; // Gravity
+      p.vy += 0.35;
       p.alpha -= p.decay;
       if (p.alpha > 0) {
         active = true;
@@ -620,9 +363,6 @@ function triggerCelebration() {
   requestAnimationFrame(frame);
 }
 
-/**
- * Utility: HTML Escape
- */
 function escapeHtml(str) {
   if (!str) return "";
   return str.replace(/[&<>"']/g, function(m) {
@@ -636,4 +376,3 @@ function escapeHtml(str) {
     }
   });
 }
-
