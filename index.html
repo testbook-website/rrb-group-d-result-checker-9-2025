@@ -3,9 +3,8 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RRB Group D (Level-1) Result Checker Widget</title>
+  <title>RRB Group D Result Checker</title>
   <style>
-    /* ---------------- Design System ---------------- */
     :root {
       --primary: #0a3d62;
       --primary-hover: #072740;
@@ -23,7 +22,7 @@
       --text-muted: #64748b;
       --radius: 12px;
       --radius-sm: 6px;
-      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+      --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
     }
 
     * {
@@ -44,10 +43,9 @@
       line-height: 1.45;
     }
 
-    /* ---------------- Widget Container ---------------- */
     .widget-container {
       width: 100%;
-      max-width: 440px;
+      max-width: 420px;
       margin: auto;
     }
 
@@ -57,10 +55,9 @@
       border-radius: var(--radius);
       box-shadow: 0 10px 25px -5px rgba(15, 23, 42, 0.08), 0 4px 6px -2px rgba(15, 23, 42, 0.04);
       padding: 22px;
-      overflow: hidden;
     }
 
-    /* ---------------- Header ---------------- */
+    /* Header */
     .widget-header {
       display: flex;
       align-items: center;
@@ -78,7 +75,7 @@
     }
 
     .header-icon {
-      font-size: 1.6rem;
+      font-size: 1.5rem;
       line-height: 1;
     }
 
@@ -124,7 +121,7 @@
       100% { transform: scale(0.95); opacity: 0.8; }
     }
 
-    /* ---------------- Form Elements ---------------- */
+    /* Form */
     .widget-form {
       display: flex;
       flex-direction: column;
@@ -218,7 +215,6 @@
       letter-spacing: 0.5px;
     }
 
-    /* ---------------- Submit Button ---------------- */
     .submit-button {
       background: var(--primary);
       color: #ffffff;
@@ -259,7 +255,7 @@
       to { transform: rotate(360deg); }
     }
 
-    /* ---------------- Result View Inside Card ---------------- */
+    /* Result Box */
     .result-box-wrapper {
       display: none;
       margin-top: 14px;
@@ -389,144 +385,10 @@
     .res-btn.primary:hover, .btn-res-action.primary:hover {
       background: #047857;
     }
-
-    /* ---------------- Footer ---------------- */
-    .widget-footer {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 8px;
-      margin-top: 14px;
-      padding-top: 10px;
-      font-size: 0.74rem;
-      color: var(--text-muted);
-    }
-
-    .footer-link, .admin-link {
-      color: var(--accent);
-      text-decoration: none;
-      background: none;
-      border: none;
-      font-size: 0.74rem;
-      cursor: pointer;
-      padding: 0;
-    }
-
-    .footer-link:hover, .admin-link:hover {
-      text-decoration: underline;
-    }
-
-    .footer-sep {
-      color: #cbd5e1;
-    }
-
-    /* ---------------- Admin Modal ---------------- */
-    .modal-backdrop {
-      display: none;
-      position: fixed;
-      inset: 0;
-      background: rgba(15, 23, 42, 0.45);
-      backdrop-filter: blur(2px);
-      z-index: 100;
-      align-items: center;
-      justify-content: center;
-      padding: 16px;
-    }
-
-    .modal-box {
-      background: #ffffff;
-      border-radius: var(--radius);
-      width: 100%;
-      max-width: 360px;
-      padding: 16px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.15);
-    }
-
-    .modal-head {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      border-bottom: 1px solid var(--border);
-      padding-bottom: 8px;
-    }
-
-    .modal-head h3 {
-      font-size: 0.95rem;
-      font-weight: 700;
-      color: var(--primary);
-    }
-
-    .modal-close-icon {
-      background: none;
-      border: none;
-      font-size: 1.3rem;
-      cursor: pointer;
-      color: var(--text-muted);
-    }
-
-    .modal-content {
-      padding-top: 12px;
-    }
-
-    .stat-cards {
-      display: flex;
-      gap: 6px;
-      margin-bottom: 12px;
-    }
-
-    .stat-card {
-      flex: 1;
-      background: #f8fafc;
-      border: 1px solid var(--border);
-      border-radius: 4px;
-      text-align: center;
-      padding: 6px 4px;
-      font-size: 0.72rem;
-      font-weight: 600;
-    }
-
-    .stat-card span {
-      display: block;
-      font-size: 1.1rem;
-      color: var(--primary);
-    }
-
-    .stat-card.green span { color: var(--success); }
-    .stat-card.blue span { color: var(--accent); }
-
-    .csv-btn {
-      width: 100%;
-      background: var(--success);
-      color: #ffffff;
-      border: none;
-      padding: 8px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      border-radius: 4px;
-      cursor: pointer;
-      margin-bottom: 14px;
-    }
-
-    .btn-action {
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      padding: 6px 10px;
-      font-size: 0.75rem;
-      font-weight: 600;
-      border-radius: 4px;
-      cursor: pointer;
-    }
-
-    .btn-action.blue {
-      background: var(--accent);
-      color: #ffffff;
-      border-color: var(--accent);
-    }
   </style>
 </head>
 <body>
 
-  <!-- Small Embeddable Widget Container -->
   <div class="widget-container">
     <div class="widget-card">
 
@@ -548,7 +410,7 @@
       <!-- Result Form -->
       <form id="resultForm" class="widget-form">
 
-        <!-- Zone -->
+        <!-- Zone Selection -->
         <div class="form-group">
           <label for="rrbZone" class="form-label">Select RRB Zone</label>
           <select id="rrbZone" class="form-select" required>
@@ -611,48 +473,12 @@
       <!-- Embedded Result Output Container -->
       <div id="resultContainer" class="result-box-wrapper"></div>
 
-      <!-- Compact Footer -->
-      <div class="widget-footer">
-        <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="footer-link">Official Bhopal PDF</a>
-        <span class="footer-sep">•</span>
-        <button type="button" id="btnOpenAdmin" class="admin-link">⚙️ Leads &amp; Sheet</button>
-      </div>
-
-    </div>
-  </div>
-
-  <!-- Admin Modal for Sheet / CSV -->
-  <div id="adminModal" class="modal-backdrop">
-    <div class="modal-box">
-      <div class="modal-head">
-        <h3>Google Sheet &amp; Leads</h3>
-        <button id="btnCloseAdmin" class="modal-close-icon">&times;</button>
-      </div>
-      <div class="modal-content">
-        <div class="stat-cards">
-          <div class="stat-card"><span id="statTotalLeads">0</span> Checks</div>
-          <div class="stat-card green"><span id="statQualifiedLeads">0</span> Qualified</div>
-          <div class="stat-card blue"><span id="statAwaitedLeads">0</span> Alerts</div>
-        </div>
-        <div>
-          <button id="btnExportCsv" class="csv-btn">📥 Download Leads CSV</button>
-        </div>
-        <div>
-          <label class="form-label" style="display:block; margin-bottom:4px;">Webhook URL</label>
-          <div style="display:flex; gap:6px;">
-            <input type="url" id="adminWebhookUrl" class="form-input" style="font-size:0.75rem;">
-            <button id="btnSaveWebhook" class="btn-action">Save</button>
-            <button id="btnTestWebhook" class="btn-action blue">Test</button>
-          </div>
-          <div id="webhookSaveStatus" style="font-size:0.75rem; min-height:16px; margin-top:4px;"></div>
-        </div>
-      </div>
     </div>
   </div>
 
   <!-- Bhopal Database & Application Logic -->
-  <script src="./bhopal_rolls.js?v=3"></script>
-  <script src="./app.js?v=3"></script>
+  <script src="./bhopal_rolls.js?v=4"></script>
+  <script src="./app.js?v=4"></script>
 
 </body>
 </html>
