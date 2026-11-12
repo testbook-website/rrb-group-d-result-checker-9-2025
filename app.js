@@ -6,6 +6,7 @@
  * - RRB Patna (1,621) - ECR
  * - RRB Gorakhpur (2,333) - NER
  * - RRB Prayagraj (2,238) - NCR
+ * - RRB Ranchi (1,989) - SER
  */
 
 const APP_CONFIG = {
@@ -45,7 +46,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Prayagraj") {
+      if (zone === "Ranchi") {
+        document.getElementById("rollNumber").value = "279251140131228"; // Qualified Ranchi roll
+      } else if (zone === "Prayagraj") {
         document.getElementById("rollNumber").value = "139251120228395"; // Qualified Prayagraj roll
       } else if (zone === "Gorakhpur") {
         document.getElementById("rollNumber").value = "199251114915558"; // Qualified Gorakhpur roll
@@ -62,7 +65,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Prayagraj") {
+        if (zone === "Ranchi") {
+          rollInput.placeholder = "e.g. 279251140131228";
+        } else if (zone === "Prayagraj") {
           rollInput.placeholder = "e.g. 139251120228395";
         } else if (zone === "Gorakhpur") {
           rollInput.placeholder = "e.g. 199251114915558";
@@ -162,6 +167,16 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Prayagraj / Allahabad (NCR)";
     pdfUrl = "./Prayagraj.pdf";
     if (window.PRAYAGRAJ_QUALIFIED_ROLLS && window.PRAYAGRAJ_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Ranchi") {
+    zoneTitle = "RRB Ranchi (SER)";
+    pdfUrl = "./Ranchi.pdf";
+    if (window.RANCHI_QUALIFIED_ROLLS && window.RANCHI_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
