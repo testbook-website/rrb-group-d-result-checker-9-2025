@@ -3,434 +3,135 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RRB Group D (Level-1) Result 2026 | CBT Result & PET Shortlist Checker</title>
-  <meta name="description" content="Check RRB Group D (CEN 09/2025) CBT Exam Result & Physical Efficiency Test (PET) Shortlist zone-wise. RRB Bhopal zone merit list declared.">
+  <title>RRB Group D Result Checker Widget</title>
   <link rel="stylesheet" href="./styles.css">
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220%22%20%220%22%20100%20100%22><text y=%22.9em%22 font-size=%2290%22>🚆</text></svg>">
 </head>
 <body>
 
-  <!-- Top Government Notification Bar -->
-  <div class="top-gov-bar">
-    <div class="top-gov-container">
-      <div class="gov-badge">
-        <span>🇮🇳</span>
-        <span>भारत सरकार | GOVERNMENT OF INDIA • रेल मंत्रालय | MINISTRY OF RAILWAYS</span>
+  <!-- Small Embeddable Widget Container -->
+  <div class="widget-wrapper">
+    <div class="result-widget">
+
+      <!-- Widget Header -->
+      <div class="widget-header">
+        <div class="widget-title-row">
+          <div class="widget-icon">🚆</div>
+          <div>
+            <h2 class="widget-title">RRB Group D Result</h2>
+            <div class="widget-subtitle">CEN 09/2025 • CBT to PET Shortlist</div>
+          </div>
+        </div>
+        <span class="live-tag">🟢 Bhopal Live</span>
       </div>
-      <div class="gov-links">
-        <a href="https://indianrailways.gov.in" target="_blank" rel="noopener">Indian Railways Official</a>
-        <a href="https://wcr.indianrailways.gov.in" target="_blank" rel="noopener">WCR Jabalpur (RRC)</a>
+
+      <!-- Result Checker Form -->
+      <form id="resultForm" class="widget-form">
+
+        <!-- Zone Selection -->
+        <div class="form-row">
+          <label for="rrbZone" class="label">Select Zone</label>
+          <select id="rrbZone" class="input select" required>
+            <option value="Bhopal" selected>RRB Bhopal (Result Live)</option>
+            <option value="Ahmedabad">RRB Ahmedabad (Awaited)</option>
+            <option value="Ajmer">RRB Ajmer (Awaited)</option>
+            <option value="Prayagraj">RRB Prayagraj / Allahabad (Awaited)</option>
+            <option value="Bangalore">RRB Bangalore (Awaited)</option>
+            <option value="Bhubaneswar">RRB Bhubaneswar (Awaited)</option>
+            <option value="Bilaspur">RRB Bilaspur (Awaited)</option>
+            <option value="Chandigarh">RRB Chandigarh (Awaited)</option>
+            <option value="Chennai">RRB Chennai (Awaited)</option>
+            <option value="Gorakhpur">RRB Gorakhpur (Awaited)</option>
+            <option value="Guwahati">RRB Guwahati (Awaited)</option>
+            <option value="Jammu-Srinagar">RRB Jammu-Srinagar (Awaited)</option>
+            <option value="Kolkata">RRB Kolkata (Awaited)</option>
+            <option value="Malda">RRB Malda (Awaited)</option>
+            <option value="Mumbai">RRB Mumbai (Awaited)</option>
+            <option value="Muzaffarpur">RRB Muzaffarpur (Awaited)</option>
+            <option value="Patna">RRB Patna (Awaited)</option>
+            <option value="Ranchi">RRB Ranchi (Awaited)</option>
+            <option value="Secunderabad">RRB Secunderabad (Awaited)</option>
+            <option value="Siliguri">RRB Siliguri (Awaited)</option>
+            <option value="Thiruvananthapuram">RRB Thiruvananthapuram (Awaited)</option>
+          </select>
+        </div>
+
+        <!-- Candidate Full Name -->
+        <div class="form-row">
+          <label for="candidateName" class="label">Full Name</label>
+          <input type="text" id="candidateName" class="input" placeholder="Enter candidate name" required autocomplete="name">
+        </div>
+
+        <!-- Mobile Number -->
+        <div class="form-row">
+          <label for="mobileNumber" class="label">Mobile Number</label>
+          <div class="phone-group">
+            <span class="phone-code">+91</span>
+            <input type="tel" id="mobileNumber" class="input phone-input" placeholder="10-digit number" maxlength="10" required autocomplete="tel">
+          </div>
+        </div>
+
+        <!-- Roll Number -->
+        <div class="form-row">
+          <div class="label-with-action">
+            <label for="rollNumber" class="label">Roll Number (15 digits)</label>
+            <button type="button" id="btnSampleRoll" class="sample-link">Sample Roll</button>
+          </div>
+          <input type="text" id="rollNumber" class="input roll-input" placeholder="e.g. 159251120672095" maxlength="16" required>
+        </div>
+
+        <!-- Submit Button -->
+        <button type="submit" id="btnSubmit" class="submit-btn">
+          <span id="btnSpinner" class="spinner"></span>
+          <span id="btnText">Check Result</span>
+        </button>
+
+      </form>
+
+      <!-- Embedded Result Output -->
+      <div id="resultContainer" class="widget-result"></div>
+
+      <!-- Compact Footer -->
+      <div class="widget-footer">
+        <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="footer-link">Official Bhopal PDF</a>
+        <span class="sep">•</span>
+        <button type="button" id="btnOpenAdmin" class="admin-link">⚙️ Leads &amp; Sheet</button>
       </div>
+
     </div>
   </div>
 
-  <!-- Main Portal Header -->
-  <header class="site-header">
-    <div class="header-inner">
-      <div class="brand-section">
-        <div class="rail-logo-icon">
-          <!-- Indian Railways / Train SVG Icon -->
-          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <rect x="4" y="3" width="16" height="16" rx="2"></rect>
-            <path d="M4 11h16"></path>
-            <path d="M12 3v8"></path>
-            <path d="m8 19-2 3"></path>
-            <path d="m16 19 2 3"></path>
-            <circle cx="8" cy="15" r="1"></circle>
-            <circle cx="16" cy="15" r="1"></circle>
-          </svg>
-        </div>
-        <div class="brand-titles">
-          <h1>Railway Recruitment Board (RRB)</h1>
-          <div class="sub-text">CEN 09/2025: Level-1 Posts (7th CPC Pay Matrix) • CBT Result & PET Status</div>
-        </div>
-      </div>
-      <div class="header-status-pill">
-        <span class="pulse-dot"></span>
-        <span>RRB Bhopal Result Declared</span>
-      </div>
-    </div>
-  </header>
-
-  <!-- Live Notice Ticker -->
-  <div class="ticker-bar">
-    <div class="ticker-content">
-      <span class="ticker-tag">Latest Update</span>
-      <span>CEN 09/2025 CBT Results announced zone-wise! <strong>RRB Bhopal</strong> merit list released (2,294 candidates shortlisted for PET). Check status below.</span>
-    </div>
-  </div>
-
-  <!-- Main Content Container -->
-  <main class="main-wrapper">
-
-    <!-- Hero Notice Card -->
-    <div class="hero-notice-card">
-      <div class="hero-notice-text">
-        <h2>Physical Efficiency Test (PET) Shortlist Announced</h2>
-        <p>Shortlisted candidates will appear for PET conducted by Railway Recruitment Cell (RRC), West Central Railway, Jabalpur.</p>
-      </div>
-      <div>
-        <a href="./Bhopal.pdf" download="RRB_Bhopal_Group_D_Result.pdf" class="hero-pdf-btn">
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
-            <polyline points="7 10 12 15 17 10"></polyline>
-            <line x1="12" y1="15" x2="12" y2="3"></line>
-          </svg>
-          Download Official Bhopal PDF
-        </a>
-      </div>
-    </div>
-
-    <!-- 2-Column Responsive Layout -->
-    <div class="content-grid">
-
-      <!-- Left Column: Form & Result Card -->
-      <div class="main-column">
-
-        <!-- Result Checker Form Card -->
-        <div class="card form-card">
-          <div class="card-header">
-            <h2 class="card-title">
-              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0a3d62" stroke-width="2.2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-              Check Group D CBT Result
-            </h2>
-            <p class="card-subtitle">Select your RRB Zone and enter your credentials to verify PET qualification status.</p>
-          </div>
-
-          <form id="resultForm" autocomplete="on">
-
-            <!-- RRB Zone Selection -->
-            <div class="form-group">
-              <label for="rrbZone" class="form-label">
-                Select RRB Zone <span class="required-star">*</span>
-              </label>
-              <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                  <circle cx="12" cy="10" r="3"></circle>
-                </svg>
-                <select id="rrbZone" class="form-select" required>
-                  <option value="Bhopal" selected>🟢 RRB Bhopal (Result Live • 2,294 Shortlisted)</option>
-                  <option value="Ahmedabad">RRB Ahmedabad (Result Awaited)</option>
-                  <option value="Ajmer">RRB Ajmer (Result Awaited)</option>
-                  <option value="Prayagraj">RRB Prayagraj / Allahabad (Result Awaited)</option>
-                  <option value="Bangalore">RRB Bangalore (Result Awaited)</option>
-                  <option value="Bhubaneswar">RRB Bhubaneswar (Result Awaited)</option>
-                  <option value="Bilaspur">RRB Bilaspur (Result Awaited)</option>
-                  <option value="Chandigarh">RRB Chandigarh (Result Awaited)</option>
-                  <option value="Chennai">RRB Chennai (Result Awaited)</option>
-                  <option value="Gorakhpur">RRB Gorakhpur (Result Awaited)</option>
-                  <option value="Guwahati">RRB Guwahati (Result Awaited)</option>
-                  <option value="Jammu-Srinagar">RRB Jammu-Srinagar (Result Awaited)</option>
-                  <option value="Kolkata">RRB Kolkata (Result Awaited)</option>
-                  <option value="Malda">RRB Malda (Result Awaited)</option>
-                  <option value="Mumbai">RRB Mumbai (Result Awaited)</option>
-                  <option value="Muzaffarpur">RRB Muzaffarpur (Result Awaited)</option>
-                  <option value="Patna">RRB Patna (Result Awaited)</option>
-                  <option value="Ranchi">RRB Ranchi (Result Awaited)</option>
-                  <option value="Secunderabad">RRB Secunderabad (Result Awaited)</option>
-                  <option value="Siliguri">RRB Siliguri (Result Awaited)</option>
-                  <option value="Thiruvananthapuram">RRB Thiruvananthapuram (Result Awaited)</option>
-                </select>
-              </div>
-              <div id="zoneAlertBox" class="zone-alert-box">
-                <span style="color: #059669; font-weight: 700;">🟢 Result Live:</span> Official CBT Merit List for RRB Bhopal is declared (2,294 candidates shortlisted for PET).
-              </div>
-            </div>
-
-            <!-- Candidate Full Name -->
-            <div class="form-group">
-              <label for="candidateName" class="form-label">
-                Candidate Full Name <span class="required-star">*</span>
-              </label>
-              <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
-                </svg>
-                <input type="text" id="candidateName" class="form-input" placeholder="e.g. Rahul Sharma" required autocomplete="name">
-              </div>
-              <div class="input-hint">
-                <span>Enter candidate name as registered in RRB application.</span>
-              </div>
-            </div>
-
-            <!-- Mobile Number -->
-            <div class="form-group">
-              <label for="mobileNumber" class="form-label">
-                Mobile Number <span class="required-star">*</span>
-              </label>
-              <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
-                </svg>
-                <span class="phone-prefix">+91</span>
-                <input type="tel" id="mobileNumber" class="form-input phone-input" placeholder="10-digit mobile number" maxlength="10" required autocomplete="tel">
-              </div>
-              <div class="input-hint">
-                <span>For receiving PET schedule & score updates via SMS.</span>
-              </div>
-            </div>
-
-            <!-- Roll Number -->
-            <div class="form-group">
-              <label for="rollNumber" class="form-label">
-                15-Digit Roll Number <span class="required-star">*</span>
-              </label>
-              <div class="input-wrapper">
-                <svg class="input-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                  <line x1="4" y1="9" x2="20" y2="9"></line>
-                  <line x1="4" y1="15" x2="20" y2="15"></line>
-                  <line x1="10" y1="3" x2="8" y2="21"></line>
-                  <line x1="16" y1="3" x2="14" y2="21"></line>
-                </svg>
-                <input type="text" id="rollNumber" class="form-input" placeholder="e.g. 159251120672095" maxlength="16" required style="font-family: monospace; letter-spacing: 0.5px;">
-              </div>
-              <div class="input-hint">
-                <span>Bhopal roll numbers start with <strong>15925...</strong></span>
-                <button type="button" id="btnSampleRoll" class="btn-sample-roll">✨ Try Sample Qualified Roll</button>
-              </div>
-            </div>
-
-            <!-- Submit Button -->
-            <button type="submit" id="btnSubmit" class="btn-submit">
-              <span id="btnSpinner" class="btn-spinner"></span>
-              <span id="btnText">🔍 Check Result & PET Status</span>
-            </button>
-
-            <div class="form-footer-note">
-              <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
-                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
-              </svg>
-              <span>Instant verification against official RRB Bhopal merit list database.</span>
-            </div>
-
-          </form>
-        </div>
-
-        <!-- Result Container (Appears after submission) -->
-        <div id="resultContainer" class="result-card-container"></div>
-
-      </div>
-
-      <!-- Right Column: Official Guidelines & Zone Status -->
-      <aside class="side-panel">
-
-        <!-- PET Criteria Card -->
-        <div class="pet-criteria-card">
-          <h3 class="zone-list-title">
-            <span>Physical Efficiency Test (PET)</span>
-            <span style="font-size: 0.75rem; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">Mandatory</span>
-          </h3>
-          <p style="font-size: 0.82rem; color: #64748b; margin-bottom: 8px;">
-            Shortlisted candidates must qualify PET as per official Railway recruitment norms:
-          </p>
-
-          <table class="pet-criteria-table">
-            <thead>
-              <tr>
-                <th>Test Component</th>
-                <th>Male</th>
-                <th>Female</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td><strong>Weight Carry</strong></td>
-                <td>35 kg for 100m in 2 min (1 chance)</td>
-                <td>20 kg for 100m in 2 min (1 chance)</td>
-              </tr>
-              <tr>
-                <td><strong>Distance Run</strong></td>
-                <td>1000m in 4 min 15 sec</td>
-                <td>1000m in 5 min 40 sec</td>
-              </tr>
-              <tr>
-                <td><strong>Exemptions</strong></td>
-                <td colspan="2">PwBD & CCAA candidates exempted from PET</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-
-        <!-- Zone Status Overview -->
-        <div class="zone-list-card">
-          <div class="zone-list-title">
-            <span>RRB Zones Result Tracker</span>
-            <span style="font-size: 0.75rem; color: #2563eb;">21 Zones</span>
-          </div>
-
-          <div class="zone-pills-container">
-            <div class="zone-item active-zone">
-              <span>RRB Bhopal (WCR)</span>
-              <span class="zone-item-badge">OUT (2,294)</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Ahmedabad (WR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Ajmer (NWR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Prayagraj / Allahabad (NCR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Bangalore (SWR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Bilaspur (SECR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Chandigarh (NR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Chennai (SR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Kolkata (ER)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Mumbai (CR/WR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Patna (ECR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-            <div class="zone-item">
-              <span>RRB Secunderabad (SCR)</span>
-              <span class="zone-item-badge">Awaited</span>
-            </div>
-          </div>
-        </div>
-
-      </aside>
-
-    </div>
-
-  </main>
-
-  <!-- Admin & Google Sheet Setup Modal -->
+  <!-- Admin Modal for Sheet / CSV -->
   <div id="adminModal" class="modal-overlay">
     <div class="modal-card">
       <div class="modal-header">
-        <h3>⚙️ Google Sheet Webhook & Candidate Leads Manager</h3>
-        <button id="btnCloseAdmin" class="modal-close-btn">&times;</button>
+        <h3>Google Sheet &amp; Leads</h3>
+        <button id="btnCloseAdmin" class="modal-close">&times;</button>
       </div>
       <div class="modal-body">
-        
-        <!-- Live Lead Stats -->
-        <div class="admin-lead-stats">
-          <div class="stat-box">
-            <div id="statTotalLeads" class="stat-num">0</div>
-            <div class="stat-label">Total Checks</div>
-          </div>
-          <div class="stat-box">
-            <div id="statQualifiedLeads" class="stat-num" style="color: #059669;">0</div>
-            <div class="stat-label">Qualified (Bhopal)</div>
-          </div>
-          <div class="stat-box">
-            <div id="statAwaitedLeads" class="stat-num" style="color: #2563eb;">0</div>
-            <div class="stat-label">Zone Alerts</div>
-          </div>
+        <div class="stat-row">
+          <div class="stat-pill"><span id="statTotalLeads">0</span> Checks</div>
+          <div class="stat-pill success"><span id="statQualifiedLeads">0</span> Qualified</div>
+          <div class="stat-pill info"><span id="statAwaitedLeads">0</span> Alerts</div>
         </div>
-
-        <!-- Download CSV Button -->
-        <div style="margin-bottom: 24px; text-align: center;">
-          <button id="btnExportCsv" class="btn-action-primary" style="width: auto; padding: 10px 24px;">
-            📥 Download All Captured Leads (CSV)
-          </button>
-          <div style="font-size: 0.78rem; color: #64748b; margin-top: 6px;">
-            Every single submission is backed up in browser storage. Download anytime!
+        <div style="margin-top: 14px;">
+          <button id="btnExportCsv" class="export-btn">📥 Download Leads CSV</button>
+        </div>
+        <div style="margin-top: 16px;">
+          <label class="label">Google Sheet Webhook URL</label>
+          <div style="display:flex; gap:6px; margin-top:4px;">
+            <input type="url" id="adminWebhookUrl" class="input" style="font-size:0.8rem;">
+            <button id="btnSaveWebhook" class="btn-sm">Save</button>
+            <button id="btnTestWebhook" class="btn-sm btn-accent">Test</button>
           </div>
+          <div id="webhookSaveStatus" style="font-size:0.75rem; min-height:16px; margin-top:4px;"></div>
         </div>
-
-        <hr style="border: 0; border-top: 1px solid #e2e8f0; margin: 20px 0;">
-
-        <!-- Webhook Configuration -->
-        <h4 style="color: #0a3d62; font-size: 1rem; margin-bottom: 8px;">🔗 Connect Directly to Google Sheets (2 Minutes)</h4>
-        <p style="font-size: 0.84rem; color: #475569; margin-bottom: 12px;">
-          Paste your deployed Google Apps Script Web App URL below to automatically append every candidate check as a row in your Google Sheet:
-        </p>
-
-        <div style="display: flex; gap: 8px; margin-bottom: 8px;">
-          <input type="url" id="adminWebhookUrl" class="form-input" placeholder="https://script.google.com/macros/s/AKfycb.../exec" style="padding-left: 12px; font-size: 0.85rem;">
-          <button id="btnSaveWebhook" class="btn-secondary" style="white-space: nowrap; flex: 0 0 auto;">Save URL</button>
-          <button id="btnTestWebhook" class="btn-action-primary" style="white-space: nowrap; flex: 0 0 auto;">Test Sheet</button>
-        </div>
-        <div id="webhookSaveStatus" style="font-size: 0.8rem; font-weight: 600; min-height: 18px; margin-bottom: 14px;"></div>
-
-        <!-- Google Apps Script Code -->
-        <div style="font-weight: 600; color: #334155; margin-bottom: 4px;">Google Apps Script Code to Paste in your Sheet:</div>
-        <div class="code-box">
-          <button id="btnCopyScriptCode" class="copy-code-btn">📋 Copy Code</button>
-          <pre id="appsScriptCodeSnippet">function doPost(e) {
-  try {
-    var sheet = SpreadsheetApp.getActiveSpreadsheet().getActiveSheet();
-    var data = JSON.parse(e.postData.contents);
-    sheet.appendRow([
-      data.timestamp || new Date(),
-      data.name || "",
-      data.mobile || "",
-      data.rollNumber || "",
-      data.zone || "",
-      data.status || "",
-      data.userAgent || ""
-    ]);
-    return ContentService.createTextOutput(JSON.stringify({result: "success"})).setMimeType(ContentService.MimeType.JSON);
-  } catch(err) {
-    return ContentService.createTextOutput(JSON.stringify({result: "error", message: err.toString()})).setMimeType(ContentService.MimeType.JSON);
-  }
-}
-
-function doGet(e) {
-  return doPost({postData: {contents: JSON.stringify(e.parameter)}});
-}</pre>
-        </div>
-
-        <ol style="font-size: 0.82rem; color: #475569; padding-left: 18px; line-height: 1.6;">
-          <li>Create a new Google Sheet at <a href="https://sheets.new" target="_blank">sheets.new</a>. Add headers in Row 1: <code>Timestamp | Name | Mobile | Roll Number | Zone | Status | User Agent</code></li>
-          <li>Click <strong>Extensions &gt; Apps Script</strong>.</li>
-          <li>Paste the code above and click <strong>Deploy &gt; New deployment</strong>.</li>
-          <li>Select type: <strong>Web app</strong>, Execute as: <strong>Me</strong>, Who has access: <strong>Anyone</strong>.</li>
-          <li>Copy the Web App URL and paste it in the box above!</li>
-        </ol>
-
       </div>
     </div>
   </div>
 
-  <!-- Site Footer -->
-  <footer class="site-footer">
-    <div class="footer-inner">
-      <div>
-        <strong>RRB Group D (CEN 09/2025) Result Portal</strong> • Information compiled from official RRB notifications.
-      </div>
-      <div class="footer-links">
-        <a href="./Bhopal.pdf" target="_blank">Official Bhopal PDF</a>
-        <button id="btnOpenAdmin">⚙️ Sheet Setup & Leads</button>
-      </div>
-    </div>
-  </footer>
-
-  <!-- Load Bhopal Qualified Roll Numbers Database (2,294 Roll Numbers) -->
+  <!-- Bhopal Database & Application Logic -->
   <script src="./bhopal_rolls.js"></script>
-
-  <!-- Load Application Engine -->
   <script src="./app.js"></script>
 
 </body>
 </html>
-

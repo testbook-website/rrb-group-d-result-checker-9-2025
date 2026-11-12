@@ -246,7 +246,7 @@ async function handleFormSubmit(e) {
   // Reset button state
   if (submitBtn) submitBtn.disabled = false;
   if (btnSpinner) btnSpinner.style.display = "none";
-  if (btnText) btnText.textContent = "🔍 Check Result & PET Status";
+  if (btnText) btnText.textContent = "Check Result";
 
   // Display Result
   displayResultCard({
@@ -264,7 +264,7 @@ async function handleFormSubmit(e) {
 }
 
 /**
- * Display Result Card
+ * Display Result Card (Compact Widget)
  */
 function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwaitedZone, status }) {
   const container = document.getElementById("resultContainer");
@@ -273,156 +273,54 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
   let html = "";
 
   if (isQualified) {
-    // Qualified Card
     html = `
-      <div class="result-box qualified" id="printableScorecard">
-        <div class="result-header-badge">
-          <span>✓</span> Provisionally Shortlisted for PET
+      <div class="res-card qualified">
+        <span class="res-badge">✓ Qualified for PET</span>
+        <h3 class="res-title">Congratulations, ${escapeHtml(name)}!</h3>
+        <p class="res-desc">Your roll number is shortlisted for the Physical Efficiency Test (PET) under RRB Bhopal.</p>
+        <div class="res-details">
+          <div class="res-row"><span class="k">Roll No:</span><span class="v" style="color:#059669;">${escapeHtml(rollNumber)}</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB Bhopal (WCR)</span></div>
+          <div class="res-row"><span class="k">Status:</span><span class="v" style="color:#059669;">Shortlisted ✓</span></div>
         </div>
-        <h3 class="result-title">CONGRATULATIONS, ${escapeHtml(name.toUpperCase())}!</h3>
-        <p class="result-subtitle">
-          Based on your CBT performance in CEN 09/2025 (Level-1 Posts), you have successfully qualified for the <strong>Physical Efficiency Test (PET)</strong> under <strong>RRB Bhopal</strong>.
-        </p>
-
-        <table class="candidate-table">
-          <tr>
-            <td class="label-cell">Candidate Name</td>
-            <td class="value-cell">${escapeHtml(name)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Roll Number</td>
-            <td class="value-cell" style="font-family: monospace; font-size: 1rem; color: #059669;">${escapeHtml(rollNumber)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Selected RRB Zone</td>
-            <td class="value-cell">RRB Bhopal (West Central Railway)</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Recruitment Notification</td>
-            <td class="value-cell">CEN 09/2025 (Level-1 Posts 7th CPC)</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Qualification Status</td>
-            <td class="value-cell" style="color: #059669; font-weight: 800;">QUALIFIED FOR PET ✓</td>
-          </tr>
-        </table>
-
-        <div class="pet-info-box">
-          <h4>🏃 Mandatory Physical Efficiency Test (PET) Standards:</h4>
-          <ul>
-            <li><strong>Male Candidates:</strong> Lift and carry 35 kg weight for 100 meters in 2 minutes in one chance without putting the weight down, AND run 1000 meters in 4 minutes 15 seconds in one chance.</li>
-            <li><strong>Female Candidates:</strong> Lift and carry 20 kg weight for 100 meters in 2 minutes in one chance without putting the weight down, AND run 1000 meters in 5 minutes 40 seconds in one chance.</li>
-            <li><strong>Important:</strong> PET will be conducted by Railway Recruitment Cell (RRC), West Central Railway, Jabalpur (<a href="https://wcr.indianrailways.gov.in" target="_blank" style="color: #166534; font-weight: 600;">wcr.indianrailways.gov.in</a>). E-call letters will be issued shortly.</li>
-          </ul>
-        </div>
-
-        <div class="result-actions">
-          <a href="./Bhopal.pdf" download="RRB_Bhopal_Group_D_Result.pdf" class="btn-action-primary">
-            📥 Download Official PDF
-          </a>
-          <button type="button" class="btn-secondary" onclick="window.print()">
-            🖨️ Print Scorecard
-          </button>
-          <button type="button" class="btn-secondary" onclick="resetCheckForm()">
-            🔄 Check Another Roll
-          </button>
+        <div class="res-actions">
+          <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="btn-res-action primary">📥 Official PDF</a>
+          <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Another</button>
         </div>
       </div>
     `;
-
-    // Trigger Confetti Celebration!
     triggerCelebration();
 
   } else if (isAwaitedZone) {
-    // Result Awaited Card
     html = `
-      <div class="result-box awaited">
-        <div class="result-header-badge">
-          <span>⏳</span> Result Awaited - Notification Saved
+      <div class="res-card awaited">
+        <span class="res-badge">⏳ Result Awaited</span>
+        <h3 class="res-title">RRB ${escapeHtml(zone)} Result Soon</h3>
+        <p class="res-desc">Results for RRB ${escapeHtml(zone)} are expected shortly. Your details have been recorded for instant notification!</p>
+        <div class="res-details">
+          <div class="res-row"><span class="k">Mobile:</span><span class="v">+91 ${escapeHtml(mobile)}</span></div>
+          <div class="res-row"><span class="k">Roll No:</span><span class="v">${escapeHtml(rollNumber)}</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB ${escapeHtml(zone)}</span></div>
         </div>
-        <h3 class="result-title">RRB ${escapeHtml(zone.toUpperCase())} RESULT AWAITED</h3>
-        <p class="result-subtitle">
-          Railway Recruitment Board is releasing CEN 09/2025 results zone-wise. Currently, the merit list for <strong>RRB Bhopal</strong> is out. Results for <strong>RRB ${escapeHtml(zone)}</strong> are expected to be announced shortly.
-        </p>
-
-        <table class="candidate-table">
-          <tr>
-            <td class="label-cell">Candidate Name</td>
-            <td class="value-cell">${escapeHtml(name)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Mobile Number</td>
-            <td class="value-cell">+91 ${escapeHtml(mobile)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Roll Number</td>
-            <td class="value-cell" style="font-family: monospace;">${escapeHtml(rollNumber)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Zone Requested</td>
-            <td class="value-cell">RRB ${escapeHtml(zone)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Alert Status</td>
-            <td class="value-cell" style="color: #1e40af; font-weight: 700;">REGISTERED FOR INSTANT ALERT</td>
-          </tr>
-        </table>
-
-        <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.85rem; color: #1e3a8a;">
-          🔔 Your registration has been recorded! We will check the official merit list as soon as RRB ${escapeHtml(zone)} releases it and alert you.
-        </div>
-
-        <div class="result-actions">
-          <button type="button" class="btn-secondary" onclick="resetCheckForm()">
-            🔄 Check Bhopal Result
-          </button>
+        <div class="res-actions">
+          <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Bhopal</button>
         </div>
       </div>
     `;
 
   } else {
-    // Not Qualified Card
     html = `
-      <div class="result-box not-qualified">
-        <div class="result-header-badge">
-          <span>✕</span> Not in Current Shortlist
+      <div class="res-card not-qualified">
+        <span class="res-badge">Not in Current Shortlist</span>
+        <h3 class="res-title">Roll Not Found in Shortlist</h3>
+        <p class="res-desc">Roll number <strong>${escapeHtml(rollNumber)}</strong> was not found in the current PET merit list for RRB Bhopal.</p>
+        <div class="res-details">
+          <div class="res-row"><span class="k">Roll No:</span><span class="v">${escapeHtml(rollNumber)}</span></div>
+          <div class="res-row"><span class="k">Zone:</span><span class="v">RRB Bhopal</span></div>
         </div>
-        <h3 class="result-title">ROLL NUMBER NOT FOUND IN SHORTLIST</h3>
-        <p class="result-subtitle">
-          Roll Number <strong>${escapeHtml(rollNumber)}</strong> is not present in the provisional PET shortlist for <strong>RRB Bhopal</strong> (CEN 09/2025 Level-1).
-        </p>
-
-        <table class="candidate-table">
-          <tr>
-            <td class="label-cell">Candidate Name</td>
-            <td class="value-cell">${escapeHtml(name)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Roll Number</td>
-            <td class="value-cell" style="font-family: monospace;">${escapeHtml(rollNumber)}</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Zone Checked</td>
-            <td class="value-cell">RRB Bhopal</td>
-          </tr>
-          <tr>
-            <td class="label-cell">Result Status</td>
-            <td class="value-cell" style="color: #b91c1c; font-weight: 700;">NOT SHORTLISTED FOR PET</td>
-          </tr>
-        </table>
-
-        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 8px; padding: 12px; margin-bottom: 16px; font-size: 0.85rem; color: #9f1239;">
-          ℹ️ <strong>Note on Individual Marks & Percentile Score:</strong><br>
-          All candidates can view their normalized marks and percentile score by logging into the official RRB website with their Registration Number and Date of Birth (DDMMYYYY). The official scorecard link will be active shortly.
-        </div>
-
-        <div class="result-actions">
-          <a href="./Bhopal.pdf" download="RRB_Bhopal_Group_D_Result.pdf" class="btn-secondary">
-            📥 View Bhopal PDF List
-          </a>
-          <button type="button" class="btn-secondary" onclick="resetCheckForm()">
-            🔄 Check Another Roll Number
-          </button>
+        <div class="res-actions">
+          <a href="./Bhopal.pdf" download="RRB_Bhopal_Result.pdf" class="btn-res-action">📥 View PDF</a>
+          <button type="button" class="btn-res-action" onclick="resetCheckForm()">🔄 Check Another</button>
         </div>
       </div>
     `;
@@ -430,7 +328,7 @@ function displayResultCard({ name, mobile, rollNumber, zone, isQualified, isAwai
 
   container.innerHTML = html;
   container.style.display = "block";
-  container.scrollIntoView({ behavior: "smooth", block: "start" });
+  container.scrollIntoView({ behavior: "smooth", block: "nearest" });
 }
 
 /**
