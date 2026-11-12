@@ -1,7 +1,7 @@
 /**
  * RRB Group D (Level-1) Result Checker Widget
  * CEN 09/2025 Level-1 Posts
- * Active Zones: RRB Bhopal (2,294) & RRB Patna (1,621)
+ * Active Zones: RRB Bhopal (2,294), RRB Patna (1,621), RRB Gorakhpur (2,333)
  */
 
 const APP_CONFIG = {
@@ -9,22 +9,9 @@ const APP_CONFIG = {
   STORAGE_KEY_LEADS: "rrb_group_d_leads_v1"
 };
 
-let bhopalRolls = null;
-let patnaRolls = null;
-
 document.addEventListener("DOMContentLoaded", () => {
-  initDatabases();
   setupEventListeners();
 });
-
-function initDatabases() {
-  if (window.BHOPAL_QUALIFIED_ROLLS instanceof Set) {
-    bhopalRolls = window.BHOPAL_QUALIFIED_ROLLS;
-  }
-  if (window.PATNA_QUALIFIED_ROLLS instanceof Set) {
-    patnaRolls = window.PATNA_QUALIFIED_ROLLS;
-  }
-}
 
 function setupEventListeners() {
   const form = document.getElementById("resultForm");
@@ -54,7 +41,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Patna") {
+      if (zone === "Gorakhpur") {
+        document.getElementById("rollNumber").value = "199251114915558"; // Qualified Gorakhpur roll
+      } else if (zone === "Patna") {
         document.getElementById("rollNumber").value = "269251162810102"; // Qualified Patna roll
       } else {
         document.getElementById("rollNumber").value = "159251120672095"; // Qualified Bhopal roll
@@ -67,7 +56,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Patna") {
+        if (zone === "Gorakhpur") {
+          rollInput.placeholder = "e.g. 199251114915558";
+        } else if (zone === "Patna") {
           rollInput.placeholder = "e.g. 269251162810102";
         } else if (zone === "Bhopal") {
           rollInput.placeholder = "e.g. 159251120672095";
@@ -143,6 +134,16 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Patna (ECR)";
     pdfUrl = "./Patna.pdf";
     if (window.PATNA_QUALIFIED_ROLLS && window.PATNA_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Gorakhpur") {
+    zoneTitle = "RRB Gorakhpur (NER)";
+    pdfUrl = "./Gorakhpur.pdf";
+    if (window.GORAKHPUR_QUALIFIED_ROLLS && window.GORAKHPUR_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
