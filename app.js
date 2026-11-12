@@ -1,7 +1,11 @@
 /**
  * RRB Group D (Level-1) Result Checker Widget
  * CEN 09/2025 Level-1 Posts
- * Active Zones: RRB Bhopal (2,294), RRB Patna (1,621), RRB Gorakhpur (2,333)
+ * Active Zones:
+ * - RRB Bhopal (2,294) - WCR
+ * - RRB Patna (1,621) - ECR
+ * - RRB Gorakhpur (2,333) - NER
+ * - RRB Prayagraj (2,238) - NCR
  */
 
 const APP_CONFIG = {
@@ -41,7 +45,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Gorakhpur") {
+      if (zone === "Prayagraj") {
+        document.getElementById("rollNumber").value = "139251120228395"; // Qualified Prayagraj roll
+      } else if (zone === "Gorakhpur") {
         document.getElementById("rollNumber").value = "199251114915558"; // Qualified Gorakhpur roll
       } else if (zone === "Patna") {
         document.getElementById("rollNumber").value = "269251162810102"; // Qualified Patna roll
@@ -56,7 +62,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Gorakhpur") {
+        if (zone === "Prayagraj") {
+          rollInput.placeholder = "e.g. 139251120228395";
+        } else if (zone === "Gorakhpur") {
           rollInput.placeholder = "e.g. 199251114915558";
         } else if (zone === "Patna") {
           rollInput.placeholder = "e.g. 269251162810102";
@@ -144,6 +152,16 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Gorakhpur (NER)";
     pdfUrl = "./Gorakhpur.pdf";
     if (window.GORAKHPUR_QUALIFIED_ROLLS && window.GORAKHPUR_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Prayagraj") {
+    zoneTitle = "RRB Prayagraj / Allahabad (NCR)";
+    pdfUrl = "./Prayagraj.pdf";
+    if (window.PRAYAGRAJ_QUALIFIED_ROLLS && window.PRAYAGRAJ_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
