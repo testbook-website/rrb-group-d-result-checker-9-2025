@@ -227,7 +227,7 @@ async function handleFormSubmit(e) {
   const leadData = {
     timestamp: new Date().toLocaleString("en-IN", { timeZone: "Asia/Kolkata" }),
     name,
-    mobile: `+91 ${mobile}`,
+    mobile: mobile,
     rollNumber,
     zone: `RRB ${zone}`,
     status,
