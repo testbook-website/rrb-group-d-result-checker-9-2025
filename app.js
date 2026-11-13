@@ -15,6 +15,7 @@
  * - RRB Chandigarh (7,450) - NR
  * - RRB Chennai (1,731) - SR
  * - RRB Guwahati (3,799) - NFR
+ * - RRB Bangalore / Bengaluru (144) - SWR
  */
 
 const APP_CONFIG = {
@@ -54,7 +55,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Bhubaneswar") {
+      if (zone === "Bangalore" || zone === "Bengaluru") {
+        document.getElementById("rollNumber").value = "149251140572203"; // Qualified Bangalore/Bengaluru roll
+      } else if (zone === "Bhubaneswar") {
         document.getElementById("rollNumber").value = "169251133340029"; // Qualified Bhubaneswar roll
       } else if (zone === "Chandigarh") {
         document.getElementById("rollNumber").value = "179251120384717"; // Qualified Chandigarh roll
@@ -89,7 +92,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Bhubaneswar") {
+        if (zone === "Bangalore" || zone === "Bengaluru") {
+          rollInput.placeholder = "e.g. 149251140572203";
+        } else if (zone === "Bhubaneswar") {
           rollInput.placeholder = "e.g. 169251133340029";
         } else if (zone === "Chandigarh") {
           rollInput.placeholder = "e.g. 179251120384717";
@@ -297,6 +302,17 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Guwahati (NFR)";
     pdfUrl = "./Guwahati.pdf";
     if (window.GUWAHATI_QUALIFIED_ROLLS && window.GUWAHATI_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Bangalore" || zone === "Bengaluru") {
+    zoneTitle = "RRB Bangalore / Bengaluru (SWR)";
+    pdfUrl = "./Bengaluru.pdf";
+    const bgRolls = window.BENGALURU_QUALIFIED_ROLLS || window.BANGALORE_QUALIFIED_ROLLS;
+    if (bgRolls && bgRolls.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
