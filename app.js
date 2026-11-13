@@ -11,6 +11,10 @@
  * - RRB Bilaspur (2,386) - SECR
  * - RRB Kolkata (1,936) - ER
  * - RRB Ajmer (1,771) - NWR
+ * - RRB Bhubaneswar (1,463) - ECoR
+ * - RRB Chandigarh (7,450) - NR
+ * - RRB Chennai (1,731) - SR
+ * - RRB Guwahati (3,799) - NFR
  */
 
 const APP_CONFIG = {
@@ -50,7 +54,15 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Bilaspur") {
+      if (zone === "Bhubaneswar") {
+        document.getElementById("rollNumber").value = "169251133340029"; // Qualified Bhubaneswar roll
+      } else if (zone === "Chandigarh") {
+        document.getElementById("rollNumber").value = "179251120384717"; // Qualified Chandigarh roll
+      } else if (zone === "Chennai") {
+        document.getElementById("rollNumber").value = "189251120208879"; // Qualified Chennai roll
+      } else if (zone === "Guwahati") {
+        document.getElementById("rollNumber").value = "209251111198156"; // Qualified Guwahati roll
+      } else if (zone === "Bilaspur") {
         document.getElementById("rollNumber").value = "309251121773195"; // Qualified Bilaspur roll
       } else if (zone === "Kolkata") {
         document.getElementById("rollNumber").value = "229251112918129"; // Qualified Kolkata roll
@@ -77,7 +89,15 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Bilaspur") {
+        if (zone === "Bhubaneswar") {
+          rollInput.placeholder = "e.g. 169251133340029";
+        } else if (zone === "Chandigarh") {
+          rollInput.placeholder = "e.g. 179251120384717";
+        } else if (zone === "Chennai") {
+          rollInput.placeholder = "e.g. 189251120208879";
+        } else if (zone === "Guwahati") {
+          rollInput.placeholder = "e.g. 209251111198156";
+        } else if (zone === "Bilaspur") {
           rollInput.placeholder = "e.g. 309251121773195";
         } else if (zone === "Kolkata") {
           rollInput.placeholder = "e.g. 229251112918129";
@@ -237,6 +257,46 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Ajmer (NWR)";
     pdfUrl = "./Ajmer.pdf";
     if (window.AJMER_QUALIFIED_ROLLS && window.AJMER_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Bhubaneswar") {
+    zoneTitle = "RRB Bhubaneswar (ECoR)";
+    pdfUrl = "./Bhubaneswar.pdf";
+    if (window.BHUBANESWAR_QUALIFIED_ROLLS && window.BHUBANESWAR_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Chandigarh") {
+    zoneTitle = "RRB Chandigarh (NR)";
+    pdfUrl = "./Chandigarh.pdf";
+    if (window.CHANDIGARH_QUALIFIED_ROLLS && window.CHANDIGARH_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Chennai") {
+    zoneTitle = "RRB Chennai (SR)";
+    pdfUrl = "./Chennai.pdf";
+    if (window.CHENNAI_QUALIFIED_ROLLS && window.CHENNAI_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Guwahati") {
+    zoneTitle = "RRB Guwahati (NFR)";
+    pdfUrl = "./Guwahati.pdf";
+    if (window.GUWAHATI_QUALIFIED_ROLLS && window.GUWAHATI_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
