@@ -16,6 +16,7 @@
  * - RRB Chennai (1,731) - SR
  * - RRB Guwahati (3,799) - NFR
  * - RRB Bangalore / Bengaluru (144) - SWR
+ * - RRB Mumbai (4,097) - CR
  */
 
 const APP_CONFIG = {
@@ -55,7 +56,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Bangalore" || zone === "Bengaluru") {
+      if (zone === "Mumbai") {
+        document.getElementById("rollNumber").value = "249251120206740"; // Qualified Mumbai roll
+      } else if (zone === "Bangalore" || zone === "Bengaluru") {
         document.getElementById("rollNumber").value = "149251140572203"; // Qualified Bangalore/Bengaluru roll
       } else if (zone === "Bhubaneswar") {
         document.getElementById("rollNumber").value = "169251133340029"; // Qualified Bhubaneswar roll
@@ -92,7 +95,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Bangalore" || zone === "Bengaluru") {
+        if (zone === "Mumbai") {
+          rollInput.placeholder = "e.g. 249251120206740";
+        } else if (zone === "Bangalore" || zone === "Bengaluru") {
           rollInput.placeholder = "e.g. 149251140572203";
         } else if (zone === "Bhubaneswar") {
           rollInput.placeholder = "e.g. 169251133340029";
@@ -313,6 +318,16 @@ async function handleFormSubmit(e) {
     pdfUrl = "./Bengaluru.pdf";
     const bgRolls = window.BENGALURU_QUALIFIED_ROLLS || window.BANGALORE_QUALIFIED_ROLLS;
     if (bgRolls && bgRolls.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Mumbai") {
+    zoneTitle = "RRB Mumbai (CR)";
+    pdfUrl = "./Mumbai.pdf";
+    if (window.MUMBAI_QUALIFIED_ROLLS && window.MUMBAI_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
