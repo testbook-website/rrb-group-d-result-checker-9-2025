@@ -17,6 +17,7 @@
  * - RRB Guwahati (3,799) - NFR
  * - RRB Bangalore / Bengaluru (144) - SWR
  * - RRB Mumbai (4,097) - CR
+ * - RRB Secunderabad (1,705) - SCR
  */
 
 const APP_CONFIG = {
@@ -56,7 +57,9 @@ function setupEventListeners() {
       document.getElementById("candidateName").value = "Rahul Kumar";
       document.getElementById("mobileNumber").value = "9876543210";
 
-      if (zone === "Mumbai") {
+      if (zone === "Secunderabad") {
+        document.getElementById("rollNumber").value = "289251130024427"; // Qualified Secunderabad roll
+      } else if (zone === "Mumbai") {
         document.getElementById("rollNumber").value = "249251120206740"; // Qualified Mumbai roll
       } else if (zone === "Bangalore" || zone === "Bengaluru") {
         document.getElementById("rollNumber").value = "149251140572203"; // Qualified Bangalore/Bengaluru roll
@@ -95,7 +98,9 @@ function setupEventListeners() {
     zoneSelect.addEventListener("change", () => {
       const zone = zoneSelect.value;
       if (rollInput) {
-        if (zone === "Mumbai") {
+        if (zone === "Secunderabad") {
+          rollInput.placeholder = "e.g. 289251130024427";
+        } else if (zone === "Mumbai") {
           rollInput.placeholder = "e.g. 249251120206740";
         } else if (zone === "Bangalore" || zone === "Bengaluru") {
           rollInput.placeholder = "e.g. 149251140572203";
@@ -328,6 +333,16 @@ async function handleFormSubmit(e) {
     zoneTitle = "RRB Mumbai (CR)";
     pdfUrl = "./Mumbai.pdf";
     if (window.MUMBAI_QUALIFIED_ROLLS && window.MUMBAI_QUALIFIED_ROLLS.has(rollNumber)) {
+      status = "Qualified (PET Shortlisted)";
+      isQualified = true;
+    } else {
+      status = "Not in Shortlist";
+      isQualified = false;
+    }
+  } else if (zone === "Secunderabad") {
+    zoneTitle = "RRB Secunderabad (SCR)";
+    pdfUrl = "./Secunderabad.pdf";
+    if (window.SECUNDERABAD_QUALIFIED_ROLLS && window.SECUNDERABAD_QUALIFIED_ROLLS.has(rollNumber)) {
       status = "Qualified (PET Shortlisted)";
       isQualified = true;
     } else {
